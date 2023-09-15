@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
+import Query from '../components/query';
 
 const IndexPage = () => {
   const [message, setMessage] = useState('');
@@ -14,6 +15,7 @@ const IndexPage = () => {
     <div>
       <h1>Next-app</h1>
       <p>{message}</p>
+      <Query />
     </div>
   )
 }
