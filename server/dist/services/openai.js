@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const openai_1 = __importDefault(require("openai"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const neo4j_1 = __importDefault(require("./neo4j"));
 dotenv_1.default.config();
 const openai = new openai_1.default({
     apiKey: process.env.OPENAI_API_KEY,
@@ -22,6 +23,7 @@ function OpenAICall(queryPrompt) {
     return __awaiter(this, void 0, void 0, function* () {
         const query = queryPrompt;
         let completion;
+        let responseData;
         try {
             completion = yield openai.chat.completions.create({
                 model: "gpt-3.5-turbo-16k",
@@ -94,9 +96,17 @@ function OpenAICall(queryPrompt) {
             throw new Error("Error generating knowledge graph.");
         }
         if (completion && completion.choices && completion.choices[0] && completion.choices[0]["message"] && completion.choices[0]["message"]["function_call"]) {
-            const responseData = completion.choices[0]["message"]["function_call"]["arguments"];
+            responseData = completion.choices[0]["message"]["function_call"]["arguments"];
             console.log(responseData);
+            try {
+                yield (0, neo4j_1.default)(responseData);
+            }
+            catch (error) {
+                console.error("Error importing data into Neo4j: ", error);
+                throw new Error("Error importing data into Neo4j.");
+            }
         }
+        return responseData;
     });
 }
 ;

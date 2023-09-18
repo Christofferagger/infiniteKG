@@ -1,6 +1,7 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
+import ImportData from './neo4j';
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ const openai = new OpenAI({
 async function OpenAICall(queryPrompt: string): Promise<any> {
     const query = queryPrompt;
     let completion;
+    let responseData;
 
     try {
         completion = await openai.chat.completions.create({
@@ -86,9 +88,18 @@ async function OpenAICall(queryPrompt: string): Promise<any> {
     }
 
     if (completion && completion.choices && completion.choices[0] && completion.choices[0]["message"] && completion.choices[0]["message"]["function_call"]) {
-        const responseData = completion.choices[0]["message"]["function_call"]["arguments"];
+        responseData = completion.choices[0]["message"]["function_call"]["arguments"];
         console.log(responseData);
+
+        try {
+            await ImportData(responseData);
+        } catch (error) {
+            console.error("Error importing data into Neo4j: ", error);
+            throw new Error("Error importing data into Neo4j.");
+        }
     }
+
+    return responseData;
 };
 
 
