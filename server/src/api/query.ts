@@ -8,8 +8,8 @@ router.post('/query', async (req: Request, res: Response) => {
     const queryPrompt = req.body.query;
     console.log(queryPrompt);
     await OpenAICall(queryPrompt);
-    await GetAllData();
-    res.json({ message: 'Got POST' });
+    const data = await GetAllData();
+    res.json({ message: data });
 });
 
 export default router;

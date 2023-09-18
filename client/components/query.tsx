@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import CytoscapeComponent from '../components/graphVisualization';
+
 
 const Query = () => {
 
     const [inputValue, setInputValue] = useState('');
+    const [graphData, setGraphData] = useState(null);
 
     const handleSubmit = () => {
         fetch('http://localhost:3001/api/query', {
@@ -11,7 +14,8 @@ const Query = () => {
             body: JSON.stringify( {query: inputValue })
         })
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => setGraphData(data.message))
+        console.log('Got cyrograph data');
     };
 
     return (
@@ -26,6 +30,7 @@ const Query = () => {
             >
                 Send
             </button>
+            {graphData && <CytoscapeComponent elements={graphData} />}
         </div>
     )
 };

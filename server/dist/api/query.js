@@ -20,7 +20,7 @@ router.post('/query', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const queryPrompt = req.body.query;
     console.log(queryPrompt);
     yield (0, openai_1.default)(queryPrompt);
-    yield (0, neo4jGetData_1.default)();
-    res.json({ message: 'Got POST' });
+    const data = yield (0, neo4jGetData_1.default)();
+    res.json({ message: data });
 }));
 exports.default = router;
