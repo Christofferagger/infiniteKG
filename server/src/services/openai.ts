@@ -1,7 +1,7 @@
 import express from 'express';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
-import ImportData from './neo4j';
+import ImportData from './neo4jSendData';
 
 dotenv.config();
 
@@ -89,7 +89,6 @@ async function OpenAICall(queryPrompt: string): Promise<any> {
 
     if (completion && completion.choices && completion.choices[0] && completion.choices[0]["message"] && completion.choices[0]["message"]["function_call"]) {
         responseData = completion.choices[0]["message"]["function_call"]["arguments"];
-        console.log(responseData);
 
         try {
             await ImportData(responseData);

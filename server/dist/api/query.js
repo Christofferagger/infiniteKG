@@ -14,11 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const openai_1 = __importDefault(require("../services/openai"));
+const neo4jGetData_1 = __importDefault(require("../services/neo4jGetData"));
 const router = (0, express_1.Router)();
 router.post('/query', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const queryPrompt = req.body.query;
     console.log(queryPrompt);
     yield (0, openai_1.default)(queryPrompt);
+    yield (0, neo4jGetData_1.default)();
     res.json({ message: 'Got POST' });
 }));
 exports.default = router;

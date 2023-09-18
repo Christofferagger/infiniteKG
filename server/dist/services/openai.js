@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const openai_1 = __importDefault(require("openai"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const neo4j_1 = __importDefault(require("./neo4j"));
+const neo4jSendData_1 = __importDefault(require("./neo4jSendData"));
 dotenv_1.default.config();
 const openai = new openai_1.default({
     apiKey: process.env.OPENAI_API_KEY,
@@ -97,9 +97,8 @@ function OpenAICall(queryPrompt) {
         }
         if (completion && completion.choices && completion.choices[0] && completion.choices[0]["message"] && completion.choices[0]["message"]["function_call"]) {
             responseData = completion.choices[0]["message"]["function_call"]["arguments"];
-            console.log(responseData);
             try {
-                yield (0, neo4j_1.default)(responseData);
+                yield (0, neo4jSendData_1.default)(responseData);
             }
             catch (error) {
                 console.error("Error importing data into Neo4j: ", error);
