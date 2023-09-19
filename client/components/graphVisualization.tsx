@@ -12,8 +12,14 @@ const CytoscapeComponent = ({ elements }) => {
         {
           selector: 'node',
           style: {
+            'shape': 'rectangle',
+            'label': 'data(id)',
             'background-color': '#666',
-            'label': 'data(id)'
+            'text-valign': 'center',
+            'text-halign': 'center',
+            'width': 'label',
+            'height': 'label',
+            'padding': '30px'
           }
         },
         {
@@ -27,7 +33,7 @@ const CytoscapeComponent = ({ elements }) => {
         }
       ],
       layout: {
-        name: 'grid'
+        name: 'circle'
       }
     });
   }, [elements]);
