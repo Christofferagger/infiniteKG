@@ -12,14 +12,18 @@ const CytoscapeComponent = ({ elements }) => {
         {
           selector: 'node',
           style: {
-            'shape': 'rectangle',
-            'label': 'data(id)',
-            'background-color': '#666',
+            'shape': 'roundrectangle',
             'text-valign': 'center',
             'text-halign': 'center',
+            'label': 'data(label)',
+            'font-size': '16px',
+            'font-weight': 'bold',
             'width': 'label',
             'height': 'label',
-            'padding': '30px'
+            'border-width': '0.5px',
+            'border-color': '#212121',
+            'padding': '24px',
+            'background-color': '#CCFFDA',
           }
         },
         {
