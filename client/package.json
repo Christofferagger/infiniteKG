@@ -1,6 +1,8 @@
 {
   "private": true,
   "scripts": {
+    "build:css": "tailwindcss build styles/globals.css -o styles/tailwind.css",
+    "watch:css": "onchange '**/*.css' -- npm run build:css",
     "dev": "next",
     "build": "next build",
     "start": "next start -p 4000",
@@ -11,12 +13,15 @@
     "http-proxy-middleware": "^2.0.6",
     "next": "latest",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.3.3"
   },
   "devDependencies": {
     "@types/node": "^12.12.21",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
+    "nodemon": "^3.0.1",
+    "onchange": "^7.1.0",
     "typescript": "^4.8.3"
   }
 }

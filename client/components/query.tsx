@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import CytoscapeComponent from '../components/graphVisualization';
 
-
-const Query = () => {
+const Query = ({ setGraphData }) => {
 
     const [inputValue, setInputValue] = useState('');
-    const [graphData, setGraphData] = useState(null);
 
     const handleSubmit = () => {
         fetch('http://localhost:3001/api/query', {
@@ -30,7 +27,6 @@ const Query = () => {
             >
                 Send
             </button>
-            {graphData && <CytoscapeComponent elements={graphData} />}
         </div>
     )
 };
