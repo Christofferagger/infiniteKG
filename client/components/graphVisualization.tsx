@@ -42,7 +42,7 @@ const CytoscapeComponent = ({ elements }) => {
     });
   }, [elements]);
 
-  return <div id="cy" style={{ width: '800px', height: '600px' }} />;
+  return <div id="cy" className="w-1/2 h-screen float-left border" />;
 };
 
 export default CytoscapeComponent;
