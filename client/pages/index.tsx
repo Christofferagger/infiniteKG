@@ -13,9 +13,8 @@ const IndexPage = () => {
   }, []);
 
   return (
-    <div>
-      <h1 className='text-2xl text-blue'>Next-app</h1>
-      <p>{message}</p>
+    <div className='w-full h-full'>
+      <h1 className='text-2xl text-blue'>infiniteKG</h1>
       <Query setGraphData={setGraphData} />
       {graphData && <CytoscapeComponent elements={graphData} />}
     </div>

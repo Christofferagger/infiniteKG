@@ -9,6 +9,7 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "autosize": "^6.0.1",
     "cytoscape": "^3.26.0",
     "http-proxy-middleware": "^2.0.6",
     "next": "latest",
