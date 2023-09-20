@@ -37,7 +37,9 @@ const CytoscapeComponent = ({ elements }) => {
         }
       ],
       layout: {
-        name: 'circle'
+        name: 'cose',
+        idealEdgeLength: 10,
+        nodeOverlap: 5
       }
     });
   }, [elements]);
