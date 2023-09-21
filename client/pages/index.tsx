@@ -9,12 +9,14 @@ const IndexPage = () => {
 
   return (
     <div className='w-full h-full'>
-      <div className='flex items-center justify-center py-3 border-b'>
+      <div className='flex items-center justify-center py-3 border-b fixed w-full z-10 bg-white-custom'>
         <h1 className='text-2xl text-blue'>infiniteKG</h1>
       </div>
       <Query setGraphData={setGraphData} setChat={setChat} />
-      {graphData && <CytoscapeComponent elements={graphData} />}
-      <Chat chat={chat} />
+      <div className='flex'>
+        {graphData && <CytoscapeComponent elements={graphData} />}
+        <Chat chat={chat} />
+      </div>
     </div>
   )
 }

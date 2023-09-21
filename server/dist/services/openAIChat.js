@@ -18,6 +18,7 @@ dotenv_1.default.config();
 const openai = new openai_1.default({
     apiKey: process.env.OPENAI_API_KEY,
 });
+let chatHistory = [];
 function OpenAIChat(query, data) {
     return __awaiter(this, void 0, void 0, function* () {
         const prompt = `Please make a comprehensive answer to this question: ${query}. Use the following knowledge-graph to direct your answer: ${data}. You must at no point mention the knowledge graph in your answer. The user should get a collective in depth answer when looking at the provided knowledge graph and reading your answer`;
@@ -34,6 +35,10 @@ function OpenAIChat(query, data) {
             });
             if (response.choices[0] && response.choices[0]["message"]["content"]) {
                 answer = response.choices[0]["message"]["content"];
+                chatHistory.push({
+                    query: query,
+                    response: answer
+                });
             }
             else {
                 answer = "No response from OpenAI";
@@ -42,7 +47,7 @@ function OpenAIChat(query, data) {
         catch (error) {
             console.error(error);
         }
-        return answer;
+        return chatHistory;
     });
 }
 ;

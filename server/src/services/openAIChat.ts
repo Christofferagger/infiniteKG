@@ -7,7 +7,14 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function OpenAIChat(query: string, data: any): Promise<string> {
+type ChatHistoryType = {
+    query: string;
+    response: string;
+};
+
+let chatHistory: ChatHistoryType[] = [];
+
+async function OpenAIChat(query: string, data: any): Promise<ChatHistoryType[]> {
     
     const prompt = `Please make a comprehensive answer to this question: ${query}. Use the following knowledge-graph to direct your answer: ${data}. You must at no point mention the knowledge graph in your answer. The user should get a collective in depth answer when looking at the provided knowledge graph and reading your answer`;
 
@@ -25,6 +32,10 @@ async function OpenAIChat(query: string, data: any): Promise<string> {
 
         if (response.choices[0] && response.choices[0]["message"]["content"]) {
             answer = response.choices[0]["message"]["content"];
+            chatHistory.push({
+                query: query,
+                response: answer
+            })
         } else {
             answer = "No response from OpenAI";
         }
@@ -33,7 +44,7 @@ async function OpenAIChat(query: string, data: any): Promise<string> {
         console.error(error);
     }
     
-    return answer;
+    return chatHistory;
 };
 
 export default OpenAIChat;
