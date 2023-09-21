@@ -19,11 +19,14 @@ dotenv_1.default.config();
 const openai = new openai_1.default({
     apiKey: process.env.OPENAI_API_KEY,
 });
+const typeColorMapping = ['#CCFFDA', '#E4CCFF', '#FECCFF', '#CCD1FF', '#CCE0FF', '#FFE8CC', '#FBFFCC', '#FFCFCC', '#FFCCDE'];
+const typeToColor = new Map();
+let colorIndex = 0;
 function OpenAICall(queryPrompt) {
     return __awaiter(this, void 0, void 0, function* () {
         const query = queryPrompt;
         let completion;
-        let responseData;
+        let responseData = { nodes: [], edges: [] };
         try {
             completion = yield openai.chat.completions.create({
                 model: "gpt-3.5-turbo-16k",
@@ -36,7 +39,7 @@ function OpenAICall(queryPrompt) {
                 functions: [
                     {
                         name: "knowledge_graph",
-                        description: "Generate a knowledge graph with entities and relationships. Use the colors to help differentiate between different node or edge types/categories. Always provide light pastel colors that work well with black font.",
+                        description: "Generate a knowledge graph with entities and relationships. Use type to give context about the entities relationship.",
                         parameters: {
                             type: "object",
                             properties: {
@@ -56,13 +59,12 @@ function OpenAICall(queryPrompt) {
                                             id: { type: "string" },
                                             label: { type: "string" },
                                             type: { type: "string" },
-                                            color: { type: "string" },
                                             properties: {
                                                 type: "object",
                                                 description: "Additional attributes for the node"
                                             }
                                         },
-                                        required: ["id", "label", "type", "color"]
+                                        required: ["id", "label", "type"]
                                     }
                                 },
                                 edges: {
@@ -74,13 +76,12 @@ function OpenAICall(queryPrompt) {
                                             to: { type: "string" },
                                             relationship: { type: "string" },
                                             direction: { type: "string" },
-                                            color: { type: "string" },
                                             properties: {
                                                 type: "object",
                                                 description: "Additional attributes for the edge"
                                             }
                                         },
-                                        required: ["from", "to", "relationship", "color"]
+                                        required: ["from", "to", "relationship"]
                                     }
                                 }
                             },
@@ -96,9 +97,16 @@ function OpenAICall(queryPrompt) {
             throw new Error("Error generating knowledge graph.");
         }
         if (completion && completion.choices && completion.choices[0] && completion.choices[0]["message"] && completion.choices[0]["message"]["function_call"]) {
-            responseData = completion.choices[0]["message"]["function_call"]["arguments"];
+            responseData = JSON.parse(completion.choices[0]["message"]["function_call"]["arguments"]);
+            responseData.nodes.forEach(node => {
+                if (!typeToColor.has(node.type)) {
+                    typeToColor.set(node.type, typeColorMapping[colorIndex % typeColorMapping.length]);
+                    colorIndex++;
+                }
+                node.color = typeToColor.get(node.type);
+            });
             try {
-                yield (0, neo4jSendData_1.default)(responseData);
+                yield (0, neo4jSendData_1.default)(JSON.stringify(responseData));
             }
             catch (error) {
                 console.error("Error importing data into Neo4j: ", error);

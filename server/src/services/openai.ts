@@ -10,10 +10,27 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+const typeColorMapping = ['#CCFFDA', '#E4CCFF', '#FECCFF', '#CCD1FF', '#CCE0FF', '#FFE8CC', '#FBFFCC', '#FFCFCC', '#FFCCDE'];
+const typeToColor = new Map();  
+let colorIndex = 0;
+
+interface Node {
+    id: string;
+    label: string;
+    type: string;
+    properties: object;
+    color?: string;
+}
+
+interface ResponseData {
+    nodes: Node[];
+    edges: any[]; 
+}
+
 async function OpenAICall(queryPrompt: string): Promise<any> {
     const query = queryPrompt;
     let completion;
-    let responseData;
+    let responseData: ResponseData = { nodes: [], edges: [] };
 
     try {
         completion = await openai.chat.completions.create({
@@ -27,7 +44,7 @@ async function OpenAICall(queryPrompt: string): Promise<any> {
             functions: [
                 {
                     name: "knowledge_graph",
-                    description: "Generate a knowledge graph with entities and relationships. Use the colors to help differentiate between different node or edge types/categories. Always provide light pastel colors that work well with black font.",
+                    description: "Generate a knowledge graph with entities and relationships. Use type to give context about the entities relationship.",
                     parameters: {
                         type: "object",
                         properties: {
@@ -46,14 +63,13 @@ async function OpenAICall(queryPrompt: string): Promise<any> {
                                     properties: {
                                         id: { type: "string" },
                                         label: { type: "string" },
-                                        type: { type: "string" },
-                                        color: { type: "string" },  
+                                        type: { type: "string" }, 
                                         properties: {
                                             type: "object",
                                             description: "Additional attributes for the node"
                                         }
                                     },
-                                    required: ["id", "label", "type", "color"]  
+                                    required: ["id", "label", "type"]  
                                 }
                             },
                             edges: {
@@ -65,13 +81,12 @@ async function OpenAICall(queryPrompt: string): Promise<any> {
                                         to: { type: "string" },
                                         relationship: { type: "string" },
                                         direction: { type: "string" },
-                                        color: { type: "string" },  
                                         properties: {
                                             type: "object",
                                             description: "Additional attributes for the edge"
                                         }
                                     },
-                                    required: ["from", "to", "relationship", "color"] 
+                                    required: ["from", "to", "relationship"] 
                                 }
                             }
                         },
@@ -88,10 +103,18 @@ async function OpenAICall(queryPrompt: string): Promise<any> {
     }
 
     if (completion && completion.choices && completion.choices[0] && completion.choices[0]["message"] && completion.choices[0]["message"]["function_call"]) {
-        responseData = completion.choices[0]["message"]["function_call"]["arguments"];
+        responseData = JSON.parse(completion.choices[0]["message"]["function_call"]["arguments"]) as ResponseData;
+
+        responseData.nodes.forEach(node => {
+            if (!typeToColor.has(node.type)) {
+                typeToColor.set(node.type, typeColorMapping[colorIndex % typeColorMapping.length]);
+                colorIndex++;
+            }
+            node.color = typeToColor.get(node.type);
+        });
 
         try {
-            await ImportData(responseData);
+            await ImportData(JSON.stringify(responseData));
         } catch (error) {
             console.error("Error importing data into Neo4j: ", error);
             throw new Error("Error importing data into Neo4j.");

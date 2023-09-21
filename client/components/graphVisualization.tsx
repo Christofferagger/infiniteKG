@@ -23,16 +23,23 @@ const CytoscapeComponent = ({ elements }) => {
             'border-width': '0.5px',
             'border-color': '#212121',
             'padding': '24px',
-            'background-color': '#CCFFDA',
+            'background-color': 'data(color)',
           }
         },
         {
           selector: 'edge',
           style: {
             'width': 3,
-            'line-color': '#ccc',
-            'target-arrow-color': '#ccc',
-            'target-arrow-shape': 'triangle'
+            'line-color': '#CBCBCB',
+            'target-arrow-color': '#CBCBCB',
+            'target-arrow-shape': 'triangle',
+            'arrow-scale': 1.5,
+            'curve-style': 'bezier',
+            'label': 'data(type)',
+            'text-background-color': '#f9f9f9',  
+            'text-background-opacity': 1,
+            'text-background-shape': 'roundrectangle',
+            'text-background-padding': 2, 
           }
         }
       ],
