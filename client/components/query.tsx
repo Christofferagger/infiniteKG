@@ -12,7 +12,10 @@ const Query = ({ setGraphData }) => {
             body: JSON.stringify( {query: inputValue })
         })
         .then(response => response.json())
-        .then(data => setGraphData(data.message))
+        .then(data => {
+            setGraphData(data.message.data);
+            console.log(data.message.chat);
+        })
         console.log('Got cyrograph data');
     };
 

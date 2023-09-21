@@ -27,7 +27,7 @@ interface ResponseData {
     edges: any[]; 
 }
 
-async function OpenAICall(queryPrompt: string): Promise<any> {
+async function OpenAIKG(queryPrompt: string): Promise<any> {
     const query = queryPrompt;
     let completion;
     let responseData: ResponseData = { nodes: [], edges: [] };
@@ -125,5 +125,5 @@ async function OpenAICall(queryPrompt: string): Promise<any> {
 };
 
 
-export default OpenAICall;
+export default OpenAIKG;
 

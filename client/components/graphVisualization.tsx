@@ -3,8 +3,6 @@ import cytoscape from 'cytoscape';
 
 const CytoscapeComponent = ({ elements }) => {
   useEffect(() => {
-    console.log(elements)
-    console.log('Container:', document.getElementById('cy'));
     const cy = cytoscape({
       container: document.getElementById('cy'),
       elements,
