@@ -9,10 +9,6 @@ const port = 3001;
 
 app.use('/api', queryRouter);
 
-app.get('/api/data', (req: Request, res: Response) => {
-    res.json({ message: 'Hello from the server!' });
-});
-
 app.listen(port, () => {
     console.log(`Server is running on localhost:${port}`);
 });

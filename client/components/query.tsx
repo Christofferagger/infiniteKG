@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import autosize from 'autosize'
 
-const Query = ({ setGraphData }) => {
+const Query = ({ setGraphData, setChat }) => {
 
     const [inputValue, setInputValue] = useState('');
 
@@ -14,7 +14,7 @@ const Query = ({ setGraphData }) => {
         .then(response => response.json())
         .then(data => {
             setGraphData(data.message.data);
-            console.log(data.message.chat);
+            setChat(data.message.chat);
         })
         console.log('Got cyrograph data');
     };
