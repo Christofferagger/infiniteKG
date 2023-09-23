@@ -10,6 +10,11 @@ module.exports = {
       colors: {
         'blue-primary': '#00A1FC',
         'white-custom': '#f9f9f9',
+        'border-purple': '#BA7CFF',
+        'border-blue': '#3AD0FF'
+      },
+      borderWidth: {
+        '1.5': '1.5px',
       }
     },
   },

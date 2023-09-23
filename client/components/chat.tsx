@@ -12,10 +12,12 @@ const Chat = ({ chat }) => {
 
                     return (
                         <div key={index}>
-                            <div className='py-8 px-6 border-b-2'>
+                            <div className='py-8 px-6 border-b-2 space-y-1'>
+                            <div className='h-0.5 w-5 bg-border-purple border-1.5 border-border-purple rounded-full'></div>
                                 <p>{query}</p>
                             </div>
-                            <div className='py-8 px-6 border-b-2'>
+                            <div className='py-8 px-6 border-b-2 space-y-1'>
+                                <div className='h-0.5 w-5 bg-border-blue border-1.5 border-border-blue rounded-full'></div>
                                 <ReactMarkdown 
                                     className='leading-7'
                                     components={{
