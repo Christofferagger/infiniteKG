@@ -589,6 +589,10 @@ video {
   float: left;
 }
 
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
 .ml-auto {
   margin-left: auto;
 }

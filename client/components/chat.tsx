@@ -16,7 +16,14 @@ const Chat = ({ chat }) => {
                                 <p>{query}</p>
                             </div>
                             <div className='py-8 px-6 border-b-2'>
-                                <ReactMarkdown className='leading-7'>{response}</ReactMarkdown>
+                                <ReactMarkdown 
+                                    className='leading-7'
+                                    components={{
+                                        p: ({node, ...props}) => <p {...props} className="mb-2" />
+                                    }}
+                                >
+                                    {response}
+                                </ReactMarkdown>
                             </div>
                         </div>
                     )

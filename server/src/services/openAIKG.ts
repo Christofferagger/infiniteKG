@@ -103,6 +103,7 @@ async function OpenAIKG(queryPrompt: string): Promise<any> {
     }
 
     if (completion && completion.choices && completion.choices[0] && completion.choices[0]["message"] && completion.choices[0]["message"]["function_call"]) {
+        console.log(completion.choices[0]["message"]["function_call"]["arguments"]);
         responseData = JSON.parse(completion.choices[0]["message"]["function_call"]["arguments"]) as ResponseData;
 
         responseData.nodes.forEach(node => {

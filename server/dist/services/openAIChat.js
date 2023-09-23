@@ -35,6 +35,8 @@ function OpenAIChat(query, data) {
             });
             if (response.choices[0] && response.choices[0]["message"]["content"]) {
                 answer = response.choices[0]["message"]["content"];
+                answer = answer.replace(/•/g, '\n•');
+                answer = answer.replace(/(\d+\.\s)/g, '\n$1');
                 chatHistory.push({
                     query: query,
                     response: answer
