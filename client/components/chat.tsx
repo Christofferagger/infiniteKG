@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import ReactMarkdown from 'react-markdown';
 
 const Chat = ({ chat }) => {
 
-    console.log(chat);
     return (
         <div className='w-1/2 ml-auto overflow-auto border pt-14 pb-24'>
             {Array.isArray(chat) && chat.length > 0 ? (
@@ -12,11 +12,11 @@ const Chat = ({ chat }) => {
 
                     return (
                         <div key={index}>
-                            <div>
+                            <div className='py-8 px-6 border-b-2'>
                                 <p>{query}</p>
                             </div>
-                            <div>
-                                <p>{response}</p>
+                            <div className='py-8 px-6 border-b-2'>
+                                <ReactMarkdown className='leading-7'>{response}</ReactMarkdown>
                             </div>
                         </div>
                     )

@@ -21,7 +21,7 @@ const openai = new openai_1.default({
 let chatHistory = [];
 function OpenAIChat(query, data) {
     return __awaiter(this, void 0, void 0, function* () {
-        const prompt = `Please make a comprehensive answer to this question: ${query}. Use the following knowledge-graph to direct your answer: ${data}. You must at no point mention the knowledge graph in your answer. The user should get a collective in depth answer when looking at the provided knowledge graph and reading your answer`;
+        const prompt = `Please make a comprehensive answer to this question: ${query}. Use the following knowledge-graph to direct your answer: ${data}. You must at no point mention the knowledge graph in your answer. The user should get a collective in depth answer when looking at the provided knowledge graph and reading your answer. Please structure your answer in multiple paragraphs, use **bold** to highlight key points, use bullet points (•) for unordered lists, and use numbered lists (1., 2., 3., etc.) for sequential or prioritized information where appropriate.`;
         let answer = '';
         try {
             const response = yield openai.chat.completions.create({

@@ -659,6 +659,10 @@ video {
   border-bottom-width: 1px;
 }
 
+.border-b-2 {
+  border-bottom-width: 2px;
+}
+
 .border-t {
   border-top-width: 1px;
 }
@@ -693,6 +697,11 @@ video {
   padding-right: 0.75rem;
 }
 
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
 .px-72 {
   padding-left: 18rem;
   padding-right: 18rem;
@@ -713,6 +722,11 @@ video {
   padding-bottom: 1.5rem;
 }
 
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
 .pb-24 {
   padding-bottom: 6rem;
 }
@@ -728,6 +742,10 @@ video {
 
 .font-bold {
   font-weight: 700;
+}
+
+.leading-7 {
+  line-height: 1.75rem;
 }
 
 .text-white-custom {
