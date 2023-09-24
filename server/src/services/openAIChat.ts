@@ -27,27 +27,33 @@ async function OpenAIChat(query: string, data: any): Promise<ChatHistoryType[]> 
     Novel: Not in the previous answer.
     Faithful: Present in the knowledge-graph: ${data}.
     Guidelines:
-    The summary should be as short as possible while still giving a comprehensive answer to the question.
-    Make every word count, re-write the previous summary to improve flow and make space for additional entities.
+    The answer should be as short as possible while still giving a comprehensive answer to the question.
+    Make every word count, write the answer to improve flow and make space for additional entities.
     Make space with fusion compression and removal of uninformative phrases.
-    The answers should become highly dense and concise yet self-contained e.g. easily understood without prior knowledge.
-    You must at no point mention the knowledge graph in your answer, but you should be aware that the user should get a collective in-depth understanding by reading your answer and looking at the knowledge graph, therefore there should be synergy.
+    The answer should become highly dense and concise yet self-contained e.g. easily understood without prior knowledge.
+    You must at no point mention entities, steps or the method you have used to get the perfect answer. Nor can you mention the knowledge graph in your answer, but you should be aware that the user should get a collective in-depth understanding by reading your answer and looking at the knowledge graph, therefore there should be synergy.
     Please structure your answer in multiple paragraphs, use **bold** to highlight key points, use bullet points (•) for unordered lists, and use numbered lists (1., 2., 3., etc.) for sequential or prioritized information where appropriate.`;
 
     let answer = '';
     try {
+        const messages: { role: "system" | "user" | "assistant", content: string }[] = [
+            {
+                role: "system",
+                content: prompt
+            },
+            ...chatHistory.map(chat => [
+                { role: "user" as "user", content: chat.query },
+                { role: "assistant" as "assistant", content: chat.response }
+            ]).flat(),
+            {
+                role: "user",
+                content: query
+            }
+        ];
+        
         const response = await openai.chat.completions.create({
             model: "gpt-3.5-turbo-16k",
-            messages: [
-                {
-                    role: "system",
-                    content: prompt
-                },
-                {
-                    role: "user",
-                    content: query
-                }
-            ],
+            messages: messages
         });
 
         if (response.choices[0] && response.choices[0]["message"]["content"]) {
