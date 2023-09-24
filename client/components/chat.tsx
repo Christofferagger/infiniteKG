@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 const Chat = ({ chat }) => {
+
+    const endOfChatRef = useRef(null);
+
+    useEffect(() => {
+        endOfChatRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [chat]);
 
     return (
         <div className='w-1/2 ml-auto overflow-auto border pt-14 pb-24'>
@@ -33,6 +39,7 @@ const Chat = ({ chat }) => {
                 ) : (
                     <p>Let's get started</p>
                 )}
+                <div ref={endOfChatRef} />
         </div>
     )
 }

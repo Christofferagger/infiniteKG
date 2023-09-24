@@ -6,9 +6,11 @@ import OpenAIChat from '../services/openAIChat';
 const router = Router();
 
 router.post('/query', async (req: Request, res: Response) => {
-    const queryPrompt = req.body.query;
+    const { queryPrompt, button } = req.body;
     console.log(queryPrompt);
-    await OpenAIKG(queryPrompt);
+    if (button === 'Build Graph') {
+        await OpenAIKG(queryPrompt);
+    }
     const data = await GetAllData();
     const chat = await OpenAIChat(queryPrompt, data);
     res.json({ message: {'data': data, 'chat': chat} });
