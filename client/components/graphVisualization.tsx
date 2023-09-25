@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import cytoscape from 'cytoscape';
 
-const CytoscapeComponent = ({ elements }) => {
+const CytoscapeComponent = ({ elements, isChatVisible }) => {
   useEffect(() => {
     const cy = cytoscape({
       container: document.getElementById('cy'),
@@ -32,7 +32,9 @@ const CytoscapeComponent = ({ elements }) => {
             'target-arrow-color': '#CBCBCB',
             'target-arrow-shape': 'triangle',
             'arrow-scale': 1.5,
-            'curve-style': 'bezier',
+            'curve-style': 'unbundled-bezier',
+            'control-point-distances': [20, -20], 
+            'control-point-weights': [0.5, 0.5],
             'label': 'data(type)',
             'text-background-color': '#f9f9f9',  
             'text-background-opacity': 1,
@@ -43,13 +45,15 @@ const CytoscapeComponent = ({ elements }) => {
       ],
       layout: {
         name: 'cose',
-        idealEdgeLength: 10,
-        nodeOverlap: 5
-      }
+        idealEdgeLength: 100,
+        nodeOverlap: 20
+      },
+      userZoomingEnabled: true, 
+      userPanningEnabled: true,
     });
   }, [elements]);
 
-  return <div id="cy" className="w-1/2 h-screen float-left fixed border" />;
+  return <div id="cy" className={isChatVisible ? "w-1/2 h-screen float-left fixed border" : "w-full h-screen float-left fixed border"} />;
 };
 
 export default CytoscapeComponent;

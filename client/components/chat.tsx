@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 
-const Chat = ({ chat }) => {
+const Chat = ({ chat, isChatVisible }) => {
 
     const endOfChatRef = useRef(null);
 
@@ -10,7 +10,7 @@ const Chat = ({ chat }) => {
     }, [chat]);
 
     return (
-        <div className='w-1/2 ml-auto overflow-auto border pt-14 pb-24'>
+        <div className={isChatVisible ? 'w-1/2 ml-auto overflow-auto border pt-14 pb-24' : 'w-full ml-auto overflow-auto border pt-14 pb-24'}>
             {Array.isArray(chat) && chat.length > 0 ? (
                 chat.map((entry, index) => {
                     const query = entry.query;

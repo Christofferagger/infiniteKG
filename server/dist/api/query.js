@@ -16,13 +16,15 @@ const express_1 = require("express");
 const neo4jGetData_1 = __importDefault(require("../services/neo4jGetData"));
 const openAIKG_1 = __importDefault(require("../services/openAIKG"));
 const openAIChat_1 = __importDefault(require("../services/openAIChat"));
+const similaritySearch_1 = __importDefault(require("../services/similaritySearch"));
 const router = (0, express_1.Router)();
 // to commit
 router.post('/query', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { queryPrompt, button } = req.body;
+    const { queryPrompt, button, existingGraph } = req.body;
     console.log(queryPrompt);
     const chat = yield (0, openAIChat_1.default)(queryPrompt);
-    if (button === 'Build Graph') {
+    if (button === 'Graph') {
+        yield (0, similaritySearch_1.default)(chat.answer, existingGraph);
         yield (0, openAIKG_1.default)(queryPrompt, chat.answer);
     }
     const data = yield (0, neo4jGetData_1.default)();
