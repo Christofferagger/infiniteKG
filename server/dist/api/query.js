@@ -17,6 +17,7 @@ const neo4jGetData_1 = __importDefault(require("../services/neo4jGetData"));
 const openAIKG_1 = __importDefault(require("../services/openAIKG"));
 const openAIChat_1 = __importDefault(require("../services/openAIChat"));
 const router = (0, express_1.Router)();
+// to commit
 router.post('/query', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { queryPrompt, button } = req.body;
     console.log(queryPrompt);

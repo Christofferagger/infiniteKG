@@ -5,6 +5,7 @@ import OpenAIChat from '../services/openAIChat';
 
 const router = Router();
 
+// to commit
 router.post('/query', async (req: Request, res: Response) => {
     const { queryPrompt, button } = req.body;
     console.log(queryPrompt);
