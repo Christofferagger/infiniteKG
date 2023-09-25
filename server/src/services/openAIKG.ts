@@ -38,13 +38,13 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
             messages: [
                 {
                     role: "user",
-                    content: `Help me understand this question: ${query}, by making a simple dense knowledge-graph. Use the provided answer as a reference but remember to make it simple and dense so it make sense in a knowledge Graph, you can produce a maximum of 8 relevant nodes and 12 relevant edges. The knowledge graph should be a visual dense representation of the answer. Answer: ${answer}.`
+                    content: `Given the question: ${query}, and the answer: ${answer}, please provide a concise knowledge graph. Highlight the main points, with a maximum of 8 nodes and 10 edges. Keep edge descriptions simple, using a maximum of 4 words in the 'type' parameter. The 'id' of each node should be equivalent to its 'label'.`
                 }
             ],
             functions: [
                 {
                     name: "knowledge_graph",
-                    description: "Generate a knowledge graph with entities and relationships. Use type to give context about the entities relationship, but you can only use a maximum of 4 words. Never assign a number as the nodes ID, always assign a string almost identical to the label.",
+                    description: "Generate a concise knowledge graph with entities and relationships. The 'type' description for edges should be brief, using no more than 4 words. The 'id' for each node should match its 'label'.",
                     parameters: {
                         type: "object",
                         properties: {
@@ -53,11 +53,14 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
                                 items: {
                                     type: "object",
                                     properties: {
-                                        id: { type: "string" },
+                                        id: { 
+                                            type: "string",
+                                            description: "Should be equivalent to the label."
+                                        },
                                         label: { type: "string" },
                                         type: { type: "string" }
                                     },
-                                    required: ["id", "label", "type"]  
+                                    required: ["id", "label", "type"]
                                 }
                             },
                             edges: {
@@ -67,11 +70,15 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
                                     properties: {
                                         from: { type: "string" },
                                         to: { type: "string" },
-                                        type: { type: "string" },
-                                        relationship: { type: "string"},
+                                        type: { 
+                                            type: "string",
+                                            maxLength: 4, // Setting a maximum length for 'type'
+                                            description: "Brief description using up to 4 words."
+                                        },
+                                        relationship: { type: "string" },
                                         direction: { type: "string" }
                                     },
-                                    required: ["from", "to", "type", "direction"] 
+                                    required: ["from", "to", "type", "direction"]
                                 }
                             }
                         },
