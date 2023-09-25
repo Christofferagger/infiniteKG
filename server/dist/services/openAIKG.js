@@ -27,6 +27,7 @@ function OpenAIKG(queryPrompt, answer) {
         const query = queryPrompt;
         let completion;
         let responseData = { nodes: [], edges: [] };
+        let elements = [];
         try {
             completion = yield openai.chat.completions.create({
                 model: "gpt-3.5-turbo-16k",
@@ -89,7 +90,6 @@ function OpenAIKG(queryPrompt, answer) {
             throw new Error("Error generating knowledge graph.");
         }
         if (completion && completion.choices && completion.choices[0] && completion.choices[0]["message"] && completion.choices[0]["message"]["function_call"]) {
-            console.log(completion.choices[0]["message"]["function_call"]["arguments"]);
             responseData = JSON.parse(completion.choices[0]["message"]["function_call"]["arguments"]);
             responseData.nodes.forEach(node => {
                 if (!typeToColor.has(node.type)) {
@@ -105,8 +105,28 @@ function OpenAIKG(queryPrompt, answer) {
                 console.error("Error importing data into Neo4j: ", error);
                 throw new Error("Error importing data into Neo4j.");
             }
+            ;
+            responseData.nodes.forEach(node => {
+                let obj = {
+                    group: 'nodes',
+                    data: {
+                        id: node.id,
+                        label: node.label,
+                        color: node.color,
+                        type: node.type
+                    }
+                };
+                elements.push(obj);
+            });
+            responseData.edges.forEach(edge => {
+                let obj = {
+                    group: 'edges',
+                    data: Object.assign({ source: edge.from, target: edge.to, relationship: edge.relationship }, edge.properties)
+                };
+                elements.push(obj);
+            });
         }
-        return responseData;
+        return elements;
     });
 }
 ;

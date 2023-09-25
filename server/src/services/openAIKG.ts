@@ -27,10 +27,25 @@ interface ResponseData {
     edges: any[]; 
 }
 
+interface Element {
+    group: 'nodes' | 'edges';
+    data: {
+        id?: string;
+        label?: string;
+        color?: string;
+        type?: string;
+        source?: string;
+        target?: string;
+        relationship?: string;
+        [key: string]: any; // for additional properties in edge.properties
+    };
+}
+
 async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
     const query = queryPrompt;
     let completion;
     let responseData: ResponseData = { nodes: [], edges: [] };
+    let elements: Element[] = [];
 
     try {
         completion = await openai.chat.completions.create({
@@ -95,7 +110,6 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
     }
 
     if (completion && completion.choices && completion.choices[0] && completion.choices[0]["message"] && completion.choices[0]["message"]["function_call"]) {
-        console.log(completion.choices[0]["message"]["function_call"]["arguments"]);
         responseData = JSON.parse(completion.choices[0]["message"]["function_call"]["arguments"]) as ResponseData;
 
         responseData.nodes.forEach(node => {
@@ -111,10 +125,37 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
         } catch (error) {
             console.error("Error importing data into Neo4j: ", error);
             throw new Error("Error importing data into Neo4j.");
-        }
+        };
+    
+
+        responseData.nodes.forEach(node => {
+            let obj: Element = {
+                group: 'nodes',
+                data: {
+                    id: node.id,
+                    label: node.label,
+                    color: node.color,
+                    type: node.type
+                }
+            };
+            elements.push(obj);
+        });
+        responseData.edges.forEach(edge => {
+            let obj: Element = {
+                group: 'edges',
+                data: {
+                    source: edge.from,
+                    target: edge.to,
+                    relationship: edge.relationship,
+                    ...edge.properties
+                }
+            };
+            elements.push(obj);
+        });
+
     }
 
-    return responseData;
+    return elements;
 };
 
 

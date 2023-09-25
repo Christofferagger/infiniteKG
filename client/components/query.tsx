@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import autosize from 'autosize';
 
-const Query = ({ setGraphData, setChat, setIsChatVisible }) => {
+const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData }) => {
 
     const [inputValue, setInputValue] = useState('');
     const [buttonClicked, setButtonClicked] = useState('Graph');
@@ -10,7 +10,7 @@ const Query = ({ setGraphData, setChat, setIsChatVisible }) => {
     const [loadingMessage, setLoadingMessage] = useState('Processing...');
     const [opacity, setOpacity] = useState(1);
 
-    const loadingMessages = ['Processing...', 'Still working...', 'Almost done...', 'Purifying...', 'Another word for loading...', 'Patience is the road to wisdom...', "Chill dude it's free"];
+    const loadingMessages = ['Refining...', 'Still working...', 'Almost done...', 'Purifying...', 'It takes time for the seed you plant to bloom. Have the patience not to pluck them too soon...', 'Patience is the road to wisdom...', "Everything great takes time..."];
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -22,7 +22,7 @@ const Query = ({ setGraphData, setChat, setIsChatVisible }) => {
                     setOpacity(1);
                 }, 500); 
             }
-        }, 2500);
+        }, 3500);
     
         return () => clearInterval(intervalId); 
     }, [isLoading]);
@@ -39,6 +39,7 @@ const Query = ({ setGraphData, setChat, setIsChatVisible }) => {
             setGraphData(data.message.data);
             setChat(data.message.chat);
             setKnowledgeGraph(data.message.data); 
+            setNewData(data.message.newData);
             setInputValue('');
             setIsLoading(false);
         })

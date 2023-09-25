@@ -27,7 +27,7 @@ async function GetAllData() {
             source?: any;
             target?: any;
             relationship?: any;
-            [key: string]: any; // for additional properties in 'edge' objects
+            [key: string]: any; 
         };
     }
     let elements: Element[] = [];
@@ -80,8 +80,6 @@ async function GetAllData() {
             };
             elements.push(obj)
         })
-
-        console.log(elements);
 
         return elements;
 

@@ -6,6 +6,7 @@ import Chat from '../components/chat';
 const IndexPage = () => {
   const [chat, setChat] = useState(null);
   const [graphData, setGraphData] = useState(null);
+  const [newData, setNewData] = useState(null);
   const [isChatVisible, setIsChatVisible] = useState(false); 
 
   return (
@@ -13,9 +14,9 @@ const IndexPage = () => {
       <div className='flex items-center justify-center py-3 border-b fixed w-full z-10 bg-white-custom'>
         <h1 className='text-2xl text-blue'>infiniteKG</h1>
       </div>
-      <Query setGraphData={setGraphData} setChat={setChat} setIsChatVisible={setIsChatVisible} />
+      <Query setGraphData={setGraphData} setChat={setChat} setIsChatVisible={setIsChatVisible} setNewData={setNewData} />
       <div className='flex'>
-        {graphData && <CytoscapeComponent elements={graphData} isChatVisible={isChatVisible} />}
+        {graphData &&  newData && <CytoscapeComponent elements={graphData} isChatVisible={isChatVisible} newData={newData} />}
         {isChatVisible && <Chat chat={chat} isChatVisible={isChatVisible} />}
       </div>
     </div>

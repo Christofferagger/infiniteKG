@@ -86,7 +86,6 @@ function GetAllData() {
                 };
                 elements.push(obj);
             });
-            console.log(elements);
             return elements;
         }
         catch (error) {
