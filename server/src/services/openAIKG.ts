@@ -38,13 +38,13 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
             messages: [
                 {
                     role: "user",
-                    content: `Help me understand following by describing as a detailed knowledge graph: ${query}`
+                    content: `Help me understand this question: ${query}, by making a simple dense knowledge-graph. Use the provided answer as a reference but remember to make it simple and dense so it make sense in a knowledge Graph, you can produce a maximum of 8 relevant nodes and 12 relevant edges. The knowledge graph should be a visual dense representation of the answer. Answer: ${answer}.`
                 }
             ],
             functions: [
                 {
                     name: "knowledge_graph",
-                    description: "Generate a knowledge graph with entities and relationships. Use type to give context about the entities relationship.",
+                    description: "Generate a knowledge graph with entities and relationships. Use type to give context about the entities relationship, but you can only use a maximum of 4 words. Never assign a number as the nodes ID, always assign a string almost identical to the label.",
                     parameters: {
                         type: "object",
                         properties: {
