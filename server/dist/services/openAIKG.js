@@ -121,7 +121,7 @@ function OpenAIKG(queryPrompt, answer) {
             responseData.edges.forEach(edge => {
                 let obj = {
                     group: 'edges',
-                    data: Object.assign({ source: edge.from, target: edge.to, relationship: edge.relationship }, edge.properties)
+                    data: Object.assign({ source: edge.from, target: edge.to, relationship: edge.relationship, type: edge.type, direction: edge.direction }, edge.properties)
                 };
                 elements.push(obj);
             });

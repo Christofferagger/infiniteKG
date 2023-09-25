@@ -147,6 +147,8 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
                     source: edge.from,
                     target: edge.to,
                     relationship: edge.relationship,
+                    type: edge.type, 
+                    direction: edge.direction,
                     ...edge.properties
                 }
             };

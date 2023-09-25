@@ -2,7 +2,6 @@ import { Request, Response, Router } from 'express';
 import GetAllData from '../services/neo4jGetData';
 import OpenAIKG from '../services/openAIKG';
 import OpenAIChat from '../services/openAIChat';
-import SimilaritySearch from '../services/similaritySearch';
 
 const router = Router();
 
@@ -12,10 +11,8 @@ router.post('/query', async (req: Request, res: Response) => {
     let newData = null;
     const chat = await OpenAIChat(queryPrompt);
     if (button === 'Graph') {
-        await SimilaritySearch(chat.answer, existingGraph);
         newData = await OpenAIKG(queryPrompt, chat.answer);
     }
-    console.log(newData);
     const data = await GetAllData();
     res.json({ message: { 'data': data, 'chat': chat.chat, 'newData': newData } }); 
 });
