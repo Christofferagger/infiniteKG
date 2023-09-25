@@ -20,11 +20,11 @@ const router = (0, express_1.Router)();
 router.post('/query', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { queryPrompt, button } = req.body;
     console.log(queryPrompt);
+    const chat = yield (0, openAIChat_1.default)(queryPrompt);
     if (button === 'Build Graph') {
-        yield (0, openAIKG_1.default)(queryPrompt);
+        yield (0, openAIKG_1.default)(queryPrompt, chat.answer);
     }
     const data = yield (0, neo4jGetData_1.default)();
-    const chat = yield (0, openAIChat_1.default)(queryPrompt, data);
-    res.json({ message: { 'data': data, 'chat': chat } });
+    res.json({ message: { 'data': data, 'chat': chat.chat } });
 }));
 exports.default = router;

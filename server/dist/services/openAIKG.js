@@ -22,7 +22,7 @@ const openai = new openai_1.default({
 const typeColorMapping = ['#CCFFDA', '#E4CCFF', '#FECCFF', '#CCD1FF', '#CCE0FF', '#FFE8CC', '#FBFFCC', '#FFCFCC', '#FFCCDE'];
 const typeToColor = new Map();
 let colorIndex = 0;
-function OpenAIKG(queryPrompt) {
+function OpenAIKG(queryPrompt, answer) {
     return __awaiter(this, void 0, void 0, function* () {
         const query = queryPrompt;
         let completion;
@@ -43,14 +43,6 @@ function OpenAIKG(queryPrompt) {
                         parameters: {
                             type: "object",
                             properties: {
-                                metadata: {
-                                    type: "object",
-                                    properties: {
-                                        createdDate: { type: "string" },
-                                        lastUpdated: { type: "string" },
-                                        description: { type: "string" }
-                                    }
-                                },
                                 nodes: {
                                     type: "array",
                                     items: {
@@ -58,11 +50,7 @@ function OpenAIKG(queryPrompt) {
                                         properties: {
                                             id: { type: "string" },
                                             label: { type: "string" },
-                                            type: { type: "string" },
-                                            properties: {
-                                                type: "object",
-                                                description: "Additional attributes for the node"
-                                            }
+                                            type: { type: "string" }
                                         },
                                         required: ["id", "label", "type"]
                                     }
@@ -74,14 +62,11 @@ function OpenAIKG(queryPrompt) {
                                         properties: {
                                             from: { type: "string" },
                                             to: { type: "string" },
+                                            type: { type: "string" },
                                             relationship: { type: "string" },
-                                            direction: { type: "string" },
-                                            properties: {
-                                                type: "object",
-                                                description: "Additional attributes for the edge"
-                                            }
+                                            direction: { type: "string" }
                                         },
-                                        required: ["from", "to", "relationship"]
+                                        required: ["from", "to", "type", "direction"]
                                     }
                                 }
                             },

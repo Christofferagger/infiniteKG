@@ -27,7 +27,7 @@ interface ResponseData {
     edges: any[]; 
 }
 
-async function OpenAIKG(queryPrompt: string): Promise<any> {
+async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
     const query = queryPrompt;
     let completion;
     let responseData: ResponseData = { nodes: [], edges: [] };
@@ -48,14 +48,6 @@ async function OpenAIKG(queryPrompt: string): Promise<any> {
                     parameters: {
                         type: "object",
                         properties: {
-                            metadata: {
-                                type: "object",
-                                properties: {
-                                    createdDate: { type: "string" },
-                                    lastUpdated: { type: "string" },
-                                    description: { type: "string" }
-                                }
-                            },
                             nodes: {
                                 type: "array",
                                 items: {
@@ -63,11 +55,7 @@ async function OpenAIKG(queryPrompt: string): Promise<any> {
                                     properties: {
                                         id: { type: "string" },
                                         label: { type: "string" },
-                                        type: { type: "string" }, 
-                                        properties: {
-                                            type: "object",
-                                            description: "Additional attributes for the node"
-                                        }
+                                        type: { type: "string" }
                                     },
                                     required: ["id", "label", "type"]  
                                 }
@@ -79,14 +67,11 @@ async function OpenAIKG(queryPrompt: string): Promise<any> {
                                     properties: {
                                         from: { type: "string" },
                                         to: { type: "string" },
-                                        relationship: { type: "string" },
-                                        direction: { type: "string" },
-                                        properties: {
-                                            type: "object",
-                                            description: "Additional attributes for the edge"
-                                        }
+                                        type: { type: "string" },
+                                        relationship: { type: "string"},
+                                        direction: { type: "string" }
                                     },
-                                    required: ["from", "to", "relationship"] 
+                                    required: ["from", "to", "type", "direction"] 
                                 }
                             }
                         },
