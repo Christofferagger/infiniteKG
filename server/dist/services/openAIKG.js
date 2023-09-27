@@ -97,6 +97,11 @@ function OpenAIKG(queryPrompt, answer) {
                     colorIndex++;
                 }
                 node.color = typeToColor.get(node.type);
+                node.id = node.id.toLowerCase();
+            });
+            responseData.edges.forEach(edge => {
+                edge.from = edge.from.toLowerCase();
+                edge.to = edge.to.toLowerCase();
             });
             try {
                 yield (0, neo4jSendData_1.default)(JSON.stringify(responseData));

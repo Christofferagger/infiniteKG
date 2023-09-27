@@ -8,15 +8,18 @@ const CytoscapeComponent = ({ elements, isChatVisible, newData }) => {
     const filteredElements = elements.filter(
       element => !newData.some(newElement => {
         if(element.group === 'nodes' && newElement.group === 'nodes') {
-          // For nodes: Case-insensitive comparison of id
-          return element.data.id.toLowerCase() === newElement.data.id.toLowerCase();
+          return element.data.id === newElement.data.id;
         } else if(element.group === 'edges' && newElement.group === 'edges') {
-          // For edges: Case-insensitive comparison of source and target
-          return element.data.source.toLowerCase() === newElement.data.source.toLowerCase() &&
-                 element.data.target.toLowerCase() === newElement.data.target.toLowerCase();        }
+          return element.data.source === newElement.data.source &&
+                 element.data.target === newElement.data.target;
+        }
         return false; 
       })
     );
+
+    console.log('Original Elements:', elements);
+    console.log('New Data:', newData);
+    console.log('Filtered Elements:', filteredElements);
     
     const cy = cytoscape({
       container: document.getElementById('cy'),
@@ -82,10 +85,6 @@ const CytoscapeComponent = ({ elements, isChatVisible, newData }) => {
     });
 
     layout.run()
-
-    console.log('Original Elements:', elements);
-    console.log('New Data:', newData);
-    console.log('Filtered Elements:', filteredElements);
 
 
   }, [elements, newData]);
