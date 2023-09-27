@@ -49,22 +49,20 @@ function ImportData(responseData) {
             const data = JSON.parse(responseData);
             const nodes = data['nodes'];
             const edges = data['edges'];
-            yield Promise.all([
-                // import new nodes into neo4j
-                session.run(`
-                UNWIND $nodes AS node
-                MERGE (n:Node {id:toLower(node.id)})
-                SET n.type = node.type, n.label = node.label, n.color = node.color
-            `, { nodes }),
-                // import new relationships into neo4j
-                session.run(`
-                UNWIND $rels AS rel
-                MATCH (s:Node {id: toLower(rel.from)})
-                MATCH (t:Node {id: toLower(rel.to)})
-                MERGE (s)-[r:RELATIONSHIP {type:rel.relationship}]->(t)
-                SET r.direction = rel.direction, r.color = rel.color
-            `, { rels: edges })
-            ]);
+            // import new nodes into neo4j
+            yield session.run(`
+            UNWIND $nodes AS node
+            MERGE (n:Node {id:toLower(node.id)})
+            SET n.type = node.type, n.label = node.label, n.color = node.color
+        `, { nodes });
+            // import new relationships into neo4j
+            yield session.run(`
+            UNWIND $rels AS rel
+            MATCH (s:Node {id: toLower(rel.from)})
+            MATCH (t:Node {id: toLower(rel.to)})
+            MERGE (s)-[r:RELATIONSHIP {type:rel.relationship}]->(t)
+            SET r.direction = rel.direction, r.color = rel.color
+        `, { rels: edges });
         }
         catch (error) {
             console.error('Error when immporting data into Neo4j: ', error);
