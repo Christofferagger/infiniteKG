@@ -1,4 +1,3 @@
-import express from 'express';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import ImportData from './neo4jSendData';

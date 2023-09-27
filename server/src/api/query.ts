@@ -14,6 +14,7 @@ router.post('/query', async (req: Request, res: Response) => {
         newData = await OpenAIKG(queryPrompt, chat.answer);
     }
     const data = await GetAllData();
+    console.log(data);
     res.json({ message: { 'data': data, 'chat': chat.chat, 'newData': newData } }); 
 });
 

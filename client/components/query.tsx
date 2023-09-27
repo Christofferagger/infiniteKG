@@ -64,7 +64,7 @@ const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData }) => {
             <textarea
             ref={textareaRef}
             rows={1}
-            className="flex-grow mr-3 px-3 py-2 rounded-md border border-gray-200 focus:border-blue-primary focus:outline-none disabled:border-gray-200 bg-white-custom"
+            className={`flex-grow mr-3 px-3 py-2 rounded-md border border-gray-200 focus:border-blue-primary focus:outline-none disabled:border-gray-200 bg-white-custom ${isLoading ? 'text-gray-400' : ''}`}
             placeholder="Ask me anything..."
             onChange={(e) => setInputValue(e.target.value)}
             value={isLoading ? loadingMessage : inputValue}

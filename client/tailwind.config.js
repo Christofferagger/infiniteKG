@@ -8,6 +8,7 @@ module.exports = {
         'sans': ['Lato', 'sans-serif'],
       },
       colors: {
+        'black-primary': '#212121',
         'blue-primary': '#00A1FC',
         'white-custom': '#f9f9f9',
         'border-purple': '#BA7CFF',

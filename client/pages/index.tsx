@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Query from '../components/query';
 import CytoscapeComponent from '../components/graphVisualization';
 import Chat from '../components/chat';
+import { ChatBotIcon } from '../assets/chatBotIcon';
 
 const IndexPage = () => {
   const [chat, setChat] = useState(null);
@@ -12,7 +13,7 @@ const IndexPage = () => {
   return (
     <div className='w-full h-full'>
       <div className='flex items-center justify-center py-3 border-b fixed w-full z-10 bg-white-custom'>
-        <h1 className='text-2xl text-blue'>infiniteKG</h1>
+        <ChatBotIcon / >
       </div>
       <Query setGraphData={setGraphData} setChat={setChat} setIsChatVisible={setIsChatVisible} setNewData={setNewData} />
       <div className='flex'>
