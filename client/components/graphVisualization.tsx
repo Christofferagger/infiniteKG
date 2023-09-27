@@ -4,26 +4,10 @@ import _ from 'lodash';
 
 const CytoscapeComponent = ({ elements, isChatVisible, newData }) => {
   useEffect(() => {
-
-    const filteredElements = elements.filter(
-      element => !newData.some(newElement => {
-        if(element.group === 'nodes' && newElement.group === 'nodes') {
-          return element.data.id === newElement.data.id;
-        } else if(element.group === 'edges' && newElement.group === 'edges') {
-          return element.data.source === newElement.data.source &&
-                 element.data.target === newElement.data.target;
-        }
-        return false; 
-      })
-    );
-
-    console.log('Original Elements:', elements);
-    console.log('New Data:', newData);
-    console.log('Filtered Elements:', filteredElements);
     
     const cy = cytoscape({
       container: document.getElementById('cy'),
-      elements: filteredElements,
+      elements: elements,
       style: [
         {
           selector: 'node',
@@ -65,7 +49,12 @@ const CytoscapeComponent = ({ elements, isChatVisible, newData }) => {
       userPanningEnabled: true,
     });
 
-    const newElements = cy.add(newData);
+    const focusElements = cy.filter(ele => 
+      newData.some(focusEle => (
+        (ele.isNode() && focusEle.group === 'nodes' && ele.id() === focusEle.data.id) ||
+        (ele.isEdge() && focusEle.group === 'edges' && ele.source().id() === focusEle.data.source && ele.target().id() === focusEle.data.target)
+      ))
+    );    
 
     const layout = cy.elements().layout({
       name: 'cose',
@@ -80,8 +69,8 @@ const CytoscapeComponent = ({ elements, isChatVisible, newData }) => {
     });
 
     layout.on('layoutstop', () => {
-      cy.fit(newElements);
-      cy.center(newElements);
+      cy.fit(focusElements);
+      cy.center(focusElements);
     });
 
     layout.run()
