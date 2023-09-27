@@ -28,6 +28,7 @@ function OpenAIKG(queryPrompt, answer) {
         let completion;
         let responseData = { nodes: [], edges: [] };
         let elements = [];
+        const prompt = `Given the question: ${query}, and the answer: ${answer}, provide a concise knowledge graph. Highlight main points. Max 8 nodes and 10 edges. Keep edge descriptions simple. The 'id' of each node should be equivalent to its 'label'.`;
         try {
             const startAPICall = Date.now();
             completion = yield openai.chat.completions.create({
@@ -35,13 +36,13 @@ function OpenAIKG(queryPrompt, answer) {
                 messages: [
                     {
                         role: "user",
-                        content: `Given the question: ${query}, and the answer: ${answer}, please provide a concise knowledge graph. Highlight the main points, with a maximum of 8 nodes and 10 edges. Keep edge descriptions simple, using a maximum of 4 words in the 'type' parameter. The 'id' of each node should be equivalent to its 'label'.`
+                        content: prompt
                     }
                 ],
                 functions: [
                     {
                         name: "knowledge_graph",
-                        description: "Generate a concise knowledge graph with entities and relationships. The 'type' description for edges should be brief, using no more than 4 words. The 'id' for each node should match its 'label'.",
+                        description: "Generate a concise knowledge graph.",
                         parameters: {
                             type: "object",
                             properties: {
@@ -52,7 +53,7 @@ function OpenAIKG(queryPrompt, answer) {
                                         properties: {
                                             id: {
                                                 type: "string",
-                                                description: "Should be equivalent to the label."
+                                                description: "Equivalent to the label."
                                             },
                                             label: { type: "string" },
                                             type: { type: "string" }
@@ -70,7 +71,7 @@ function OpenAIKG(queryPrompt, answer) {
                                             type: {
                                                 type: "string",
                                                 maxLength: 4,
-                                                description: "Brief description using up to 4 words."
+                                                description: "Brief description."
                                             },
                                             relationship: { type: "string" },
                                             direction: { type: "string" }
@@ -93,18 +94,32 @@ function OpenAIKG(queryPrompt, answer) {
         }
         if (completion && completion.choices && completion.choices[0] && completion.choices[0]["message"] && completion.choices[0]["message"]["function_call"]) {
             responseData = JSON.parse(completion.choices[0]["message"]["function_call"]["arguments"]);
-            responseData.nodes.forEach(node => {
-                if (!typeToColor.has(node.type)) {
-                    typeToColor.set(node.type, typeColorMapping[colorIndex % typeColorMapping.length]);
-                    colorIndex++;
-                }
-                node.color = typeToColor.get(node.type);
-                node.id = node.id.toLowerCase();
-            });
-            responseData.edges.forEach(edge => {
-                edge.from = edge.from.toLowerCase();
-                edge.to = edge.to.toLowerCase();
-            });
+            yield Promise.all([
+                processNodes(responseData.nodes),
+                processEdges(responseData.edges)
+            ]);
+            function processNodes(nodes) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    responseData.nodes.forEach(node => {
+                        if (!typeToColor.has(node.type)) {
+                            typeToColor.set(node.type, typeColorMapping[colorIndex % typeColorMapping.length]);
+                            colorIndex++;
+                        }
+                        node.color = typeToColor.get(node.type);
+                        node.id = node.id.toLowerCase();
+                    });
+                });
+            }
+            ;
+            function processEdges(edges) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    responseData.edges.forEach(edge => {
+                        edge.from = edge.from.toLowerCase();
+                        edge.to = edge.to.toLowerCase();
+                    });
+                });
+            }
+            ;
             try {
                 // Test the performance of ImportData
                 const startImportData = Date.now();
