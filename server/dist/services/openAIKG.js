@@ -29,6 +29,7 @@ function OpenAIKG(queryPrompt, answer) {
         let responseData = { nodes: [], edges: [] };
         let elements = [];
         try {
+            const startAPICall = Date.now();
             completion = yield openai.chat.completions.create({
                 model: "gpt-3.5-turbo-16k",
                 messages: [
@@ -84,6 +85,7 @@ function OpenAIKG(queryPrompt, answer) {
                 ],
                 function_call: { name: "knowledge_graph" }
             });
+            console.log('APICall Time:', Date.now() - startAPICall, 'ms');
         }
         catch (error) {
             console.error("Error generating knowledge graph:", error);
@@ -104,7 +106,10 @@ function OpenAIKG(queryPrompt, answer) {
                 edge.to = edge.to.toLowerCase();
             });
             try {
+                // Test the performance of ImportData
+                const startImportData = Date.now();
                 yield (0, neo4jSendData_1.default)(JSON.stringify(responseData));
+                console.log('ImportData Time:', Date.now() - startImportData, 'ms');
             }
             catch (error) {
                 console.error("Error importing data into Neo4j: ", error);

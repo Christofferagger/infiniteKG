@@ -36,7 +36,7 @@ interface Element {
         source?: string;
         target?: string;
         relationship?: string;
-        [key: string]: any; // for additional properties in edge.properties
+        [key: string]: any; 
     };
 }
 
@@ -47,6 +47,7 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
     let elements: Element[] = [];
 
     try {
+        const startAPICall = Date.now();
         completion = await openai.chat.completions.create({
             model: "gpt-3.5-turbo-16k",
             messages: [
@@ -86,7 +87,7 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
                                         to: { type: "string" },
                                         type: { 
                                             type: "string",
-                                            maxLength: 4, // Setting a maximum length for 'type'
+                                            maxLength: 4,
                                             description: "Brief description using up to 4 words."
                                         },
                                         relationship: { type: "string" },
@@ -103,11 +104,13 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
             function_call: { name: "knowledge_graph" }
         });
 
+        console.log('APICall Time:', Date.now() - startAPICall, 'ms');
     } catch (error) {
         console.error("Error generating knowledge graph:", error);
         throw new Error("Error generating knowledge graph."); 
     }
 
+    
     if (completion && completion.choices && completion.choices[0] && completion.choices[0]["message"] && completion.choices[0]["message"]["function_call"]) {
         responseData = JSON.parse(completion.choices[0]["message"]["function_call"]["arguments"]) as ResponseData;
 
@@ -125,7 +128,10 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
         });
 
         try {
+            // Test the performance of ImportData
+            const startImportData = Date.now();
             await ImportData(JSON.stringify(responseData));
+            console.log('ImportData Time:', Date.now() - startImportData, 'ms');
         } catch (error) {
             console.error("Error importing data into Neo4j: ", error);
             throw new Error("Error importing data into Neo4j.");
