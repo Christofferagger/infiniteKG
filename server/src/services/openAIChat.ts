@@ -53,6 +53,8 @@ async function OpenAIChat(query: string): Promise<OpenAIChatResponseType> {
                 content: query
             }
         ];
+
+        // Adding to be deleted
         
         const response = await openai.chat.completions.create({
             model: "gpt-3.5-turbo-16k",
