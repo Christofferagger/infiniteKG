@@ -1,5 +1,7 @@
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
+import WebSocket from 'ws';
+
 
 dotenv.config();
 
@@ -17,6 +19,12 @@ type OpenAIChatResponseType = {
 };
 
 let chatHistory: ChatHistoryType[] = [];
+
+let wss: WebSocket.Server;
+
+export function setWebSocketServer(server: WebSocket.Server) {
+    wss = server;
+};
 
 async function OpenAIChat(query: string): Promise<OpenAIChatResponseType> {
     
@@ -44,6 +52,7 @@ async function OpenAIChat(query: string): Promise<OpenAIChatResponseType> {
                 role: "system",
                 content: prompt
             },
+
             ...chatHistory.map(chat => [
                 { role: "user" as "user", content: chat.query },
                 { role: "assistant" as "assistant", content: chat.response }
@@ -53,25 +62,36 @@ async function OpenAIChat(query: string): Promise<OpenAIChatResponseType> {
                 content: query
             }
         ];
-        
-        const response = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo-16k",
-            messages: messages
+
+        const stream = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: messages,
+            stream: true,
         });
 
-        if (response.choices[0] && response.choices[0]["message"]["content"]) {
-            answer = response.choices[0]["message"]["content"];
+        let answer = '';
+        for await (const part of stream) {
+            if (part.choices[0] && part.choices[0].delta) {
+                let token = part.choices[0].delta.content || '';
+                token = token.replace(/•/g, '\n•');
+                token = token.replace(/(\d+\.\s)/g, '\n$1');
+                answer += token;
+                wss.clients.forEach(client => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({ token }));
+                    }
+                });
+            } else {
+                answer = "No response from OpenAI";
+            }
+        };
 
-            answer = answer.replace(/•/g, '\n•');
-            answer = answer.replace(/(\d+\.\s)/g, '\n$1');
-            
-            chatHistory.push({
-                query: query,
-                response: answer
-            })
-        } else {
-            answer = "No response from OpenAI";
-        }
+        chatHistory.push({
+            query: query,
+            response: answer
+        });
+        
+        console.log('This is the answer: ', answer);
         
     } catch (error) {
         console.error(error);
