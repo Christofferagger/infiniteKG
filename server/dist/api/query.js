@@ -26,7 +26,6 @@ router.post('/query', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         newData = yield (0, openAIKG_1.default)(queryPrompt, chat.answer);
     }
     const data = yield (0, neo4jGetData_1.default)();
-    console.log(data);
     res.json({ message: { 'data': data, 'chat': chat.chat, 'newData': newData } });
 }));
 exports.default = router;

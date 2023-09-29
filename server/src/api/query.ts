@@ -7,15 +7,14 @@ const router = Router();
 
 // to commit
 router.post('/query', async (req: Request, res: Response) => {
-    const { queryPrompt, button, existingGraph } = req.body;
+    const { queryPrompt, button } = req.body;
     let newData = null;
-    const chat = await OpenAIChat(queryPrompt);
+    const chatAnswer = await OpenAIChat(queryPrompt);
     if (button === 'Graph') {
-        newData = await OpenAIKG(queryPrompt, chat.answer);
+        newData = await OpenAIKG(queryPrompt, chatAnswer);
     }
     const data = await GetAllData();
-    console.log(data);
-    res.json({ message: { 'data': data, 'chat': chat.chat, 'newData': newData } }); 
+    res.json({ message: { 'data': data, 'chat': chatAnswer, 'newData': newData } }); 
 });
 
 export default router;

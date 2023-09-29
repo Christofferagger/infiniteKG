@@ -11,14 +11,10 @@ type ChatHistoryType = {
     query: string;
     response: string;
 };
-type OpenAIChatResponseType = {
-    chat: ChatHistoryType[];
-    answer: string;
-};
 
 let chatHistory: ChatHistoryType[] = [];
 
-async function OpenAIChat(query: string): Promise<OpenAIChatResponseType> {
+async function OpenAIChat(query: string): Promise<string> {
     
     const prompt =
     `You will generate a concise, dense and self-contained answer to this question: ${query} by following this method.
@@ -53,33 +49,35 @@ async function OpenAIChat(query: string): Promise<OpenAIChatResponseType> {
                 content: query
             }
         ];
-
-        // Adding to be deleted
         
-        const response = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo-16k",
-            messages: messages
+        const stream = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: messages,
+            stream: true,
         });
 
-        if (response.choices[0] && response.choices[0]["message"]["content"]) {
-            answer = response.choices[0]["message"]["content"];
+        for await (const part of stream) {
+            if (part.choices[0] && part.choices[0].delta) {
+                let token = part.choices[0].delta.content || '';
+                token = token.replace(/•/g, '\n•');
+                token = token.replace(/(\d+\.\s)/g, '\n$1');
+                answer += token;
+            } else {
+                answer = "No response from OpenAI";
+            }
+        };
 
-            answer = answer.replace(/•/g, '\n•');
-            answer = answer.replace(/(\d+\.\s)/g, '\n$1');
-            
-            chatHistory.push({
-                query: query,
-                response: answer
-            })
-        } else {
-            answer = "No response from OpenAI";
-        }
+        chatHistory.push({
+            query: query,
+            response: answer
+        })
         
     } catch (error) {
         console.error(error);
     }
     
-    return {'chat': chatHistory, 'answer': answer};
+    return answer;
 };
 
 export default OpenAIChat;
+

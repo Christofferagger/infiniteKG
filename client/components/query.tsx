@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import autosize from 'autosize';
+import { chain } from 'lodash';
 
-const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData }) => {
+const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData, chat }) => {
 
     const [inputValue, setInputValue] = useState('');
     const [buttonClicked, setButtonClicked] = useState('Graph');
-    const [knowledgeGraph, setKnowledgeGraph] = useState(null); 
     const [isLoading, setIsLoading] = useState(false); 
     const [loadingMessage, setLoadingMessage] = useState('Processing...');
     const [opacity, setOpacity] = useState(1);
@@ -29,19 +29,30 @@ const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData }) => {
 
     const handleSubmit = () => {
         setIsLoading(true);
+        const initialButtonClicked = buttonClicked;
+        setButtonClicked('Chat');
+        setIsChatVisible(true);
+        
+        setChat(prevChat => [...prevChat, { query: inputValue, response: 'Loading response...' }]);
+
         fetch('http://localhost:3001/api/query', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify( {queryPrompt: inputValue, button: buttonClicked, existingGraph: knowledgeGraph })
+            body: JSON.stringify( {queryPrompt: inputValue, button: buttonClicked })
         })
         .then(response => response.json())
         .then(data => {
             setGraphData(data.message.data);
-            setChat(data.message.chat);
-            setKnowledgeGraph(data.message.data); 
             setNewData(data.message.newData);
             setInputValue('');
             setIsLoading(false);
+            setChat(prevChat => prevChat.map((item, index) => 
+                index === prevChat.length - 1 ? {...item, response: data.message.chat[data.message.chat.length - 1].response} : item
+            ));
+            if (initialButtonClicked === 'Graph') {
+                setButtonClicked('Graph');
+            };
+            setIsChatVisible(false);
         })
     };
 
