@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import autosize from 'autosize';
-import { chain } from 'lodash';
 
 const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData, chat, setPushTokens, pushTokens }) => {
 
