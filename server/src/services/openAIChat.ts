@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
+import { io } from '../index';
 
 dotenv.config();
 
@@ -62,6 +63,7 @@ async function OpenAIChat(query: string): Promise<string> {
                 token = token.replace(/•/g, '\n•');
                 token = token.replace(/(\d+\.\s)/g, '\n$1');
                 answer += token;
+                io.emit('token', token);
             } else {
                 answer = "No response from OpenAI";
             }

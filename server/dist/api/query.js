@@ -19,13 +19,13 @@ const openAIChat_1 = __importDefault(require("../services/openAIChat"));
 const router = (0, express_1.Router)();
 // to commit
 router.post('/query', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { queryPrompt, button, existingGraph } = req.body;
+    const { queryPrompt, button } = req.body;
     let newData = null;
-    const chat = yield (0, openAIChat_1.default)(queryPrompt);
+    const chatAnswer = yield (0, openAIChat_1.default)(queryPrompt);
     if (button === 'Graph') {
-        newData = yield (0, openAIKG_1.default)(queryPrompt, chat.answer);
+        newData = yield (0, openAIKG_1.default)(queryPrompt, chatAnswer);
     }
     const data = yield (0, neo4jGetData_1.default)();
-    res.json({ message: { 'data': data, 'chat': chat.chat, 'newData': newData } });
+    res.json({ message: { 'data': data, 'chat': chatAnswer, 'newData': newData } });
 }));
 exports.default = router;

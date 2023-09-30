@@ -47,7 +47,7 @@ const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData, chat }) =>
             setInputValue('');
             setIsLoading(false);
             setChat(prevChat => prevChat.map((item, index) => 
-                index === prevChat.length - 1 ? {...item, response: data.message.chat[data.message.chat.length - 1].response} : item
+                index === prevChat.length - 1 ? {...item, response: data.message.chat[data.message.chat.length - 1]} : item
             ));
             if (initialButtonClicked === 'Graph') {
                 setButtonClicked('Graph');

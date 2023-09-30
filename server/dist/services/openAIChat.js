@@ -21,6 +21,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const openai_1 = __importDefault(require("openai"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const index_1 = require("../index");
 dotenv_1.default.config();
 const openai = new openai_1.default({
     apiKey: process.env.OPENAI_API_KEY,
@@ -75,6 +76,7 @@ function OpenAIChat(query) {
                         token = token.replace(/•/g, '\n•');
                         token = token.replace(/(\d+\.\s)/g, '\n$1');
                         answer += token;
+                        index_1.io.emit('token', token);
                     }
                     else {
                         answer = "No response from OpenAI";
@@ -97,7 +99,7 @@ function OpenAIChat(query) {
         catch (error) {
             console.error(error);
         }
-        return { 'chat': chatHistory, 'answer': answer };
+        return answer;
     });
 }
 ;

@@ -10,6 +10,8 @@ const IndexPage = () => {
   const [newData, setNewData] = useState(null);
   const [isChatVisible, setIsChatVisible] = useState(false); 
 
+  
+
   return (
     <div className='w-full h-full'>
       <div className='flex items-center justify-center py-3 border-b fixed w-full z-10 bg-white-custom'>

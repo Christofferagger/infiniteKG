@@ -1,13 +1,27 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:3001'); 
 
 const Chat = ({ chat, isChatVisible }) => {
 
     const endOfChatRef = useRef(null);
+    const [tokens, setTokens] = useState([]); 
 
     useEffect(() => {
         endOfChatRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [chat]);
+
+    useEffect(() => {
+        socket.on('token', (token) => {
+            setTokens((prevTokens) => [...prevTokens, token]);
+        });
+
+        return () => {
+            socket.off('token');
+        };
+    }, [tokens]);
 
     return (
         <div className={isChatVisible ? 'w-1/2 ml-auto overflow-auto border pt-14 pb-24' : 'w-full ml-auto overflow-auto border pt-14 pb-24'}>
@@ -30,7 +44,7 @@ const Chat = ({ chat, isChatVisible }) => {
                                         p: ({node, ...props}) => <p {...props} className="mb-2" />
                                     }}
                                 >
-                                    {response}
+                                    {tokens.join('')}
                                 </ReactMarkdown>
                             </div>
                         </div>
