@@ -2,38 +2,22 @@ import React, { useEffect, useState, useRef } from 'react';
 import autosize from 'autosize';
 import { chain } from 'lodash';
 
-const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData, chat }) => {
+const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData, chat, setPushTokens, pushTokens }) => {
 
     const [inputValue, setInputValue] = useState('');
     const [buttonClicked, setButtonClicked] = useState('Graph');
     const [isLoading, setIsLoading] = useState(false); 
-    const [loadingMessage, setLoadingMessage] = useState('Processing...');
-    const [opacity, setOpacity] = useState(1);
 
-    const loadingMessages = ['Refining...', 'Still working...', 'Almost done...', 'Purifying...', 'It takes time for the seed you plant to bloom. Have the patience not to pluck them too soon...', 'Patience is the road to wisdom...', "Everything great takes time..."];
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            if (isLoading) {
-                setOpacity(0);
-                setTimeout(() => {
-                    const randomIndex = Math.floor(Math.random() * loadingMessages.length);
-                    setLoadingMessage(loadingMessages[randomIndex]);
-                    setOpacity(1);
-                }, 500); 
-            }
-        }, 3500);
-    
-        return () => clearInterval(intervalId); 
-    }, [isLoading]);
+    const loadingMessage = "Loading Graph...";
 
     const handleSubmit = () => {
         setIsLoading(true);
         const initialButtonClicked = buttonClicked;
         setButtonClicked('Chat');
         setIsChatVisible(true);
+        setPushTokens(false);
         
-        setChat(prevChat => [...prevChat, { query: inputValue, response: 'Loading response...' }]);
+        setChat(prevChat => [...prevChat, { query: inputValue, response: null }]);
 
         fetch('http://localhost:3001/api/query', {
             method: 'POST',
@@ -46,13 +30,11 @@ const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData, chat }) =>
             setNewData(data.message.newData);
             setInputValue('');
             setIsLoading(false);
-            setChat(prevChat => prevChat.map((item, index) => 
-                index === prevChat.length - 1 ? {...item, response: data.message.chat[data.message.chat.length - 1]} : item
-            ));
             if (initialButtonClicked === 'Graph') {
                 setButtonClicked('Graph');
             };
             setIsChatVisible(false);
+            setPushTokens(true);
         })
     };
 
@@ -80,7 +62,6 @@ const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData, chat }) =>
             onChange={(e) => setInputValue(e.target.value)}
             value={isLoading ? loadingMessage : inputValue}
             disabled={isLoading}
-            style={{ opacity: opacity, transition: 'opacity 0.5s' }}
             />
             <button
             className={`px-2.5 py-2.5 rounded-lg bg-blue-primary text-white-custom font-bold ${inputValue ? 'opacity-100' : 'opacity-50'} disabled:opacity-50`}

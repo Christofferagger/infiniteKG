@@ -4,10 +4,11 @@ import { io } from 'socket.io-client';
 
 const socket = io('http://localhost:3001'); 
 
-const Chat = ({ chat, isChatVisible }) => {
+const Chat = ({ chat, isChatVisible, setChat, pushTokens }) => {
 
     const endOfChatRef = useRef(null);
     const [tokens, setTokens] = useState([]); 
+    const [tokenStream, setTokenStream] = useState('');
 
     useEffect(() => {
         endOfChatRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -16,6 +17,7 @@ const Chat = ({ chat, isChatVisible }) => {
     useEffect(() => {
         socket.on('token', (token) => {
             setTokens((prevTokens) => [...prevTokens, token]);
+            setTokenStream(prevStream => prevStream + token);
         });
 
         return () => {
@@ -23,8 +25,21 @@ const Chat = ({ chat, isChatVisible }) => {
         };
     }, [tokens]);
 
+    useEffect(() => {
+        if (pushTokens === true) {
+            console.log(tokens);
+            let response = tokens.join('');
+            console.log(response);
+            setChat(prevChat => prevChat.map((item, index) => 
+            index === prevChat.length - 1 ? {...item, response: response} : item))
+            setTokens([]);
+            setTokenStream('');
+            console.log(chat);
+        }
+    }, [pushTokens])
+
     return (
-        <div className={isChatVisible ? 'w-1/2 ml-auto overflow-auto border pt-14 pb-24' : 'w-full ml-auto overflow-auto border pt-14 pb-24'}>
+        <div className={isChatVisible ? 'w-1/2 ml-auto overflow-auto border pt-14 pb-24' : 'hidden'}>
             {Array.isArray(chat) && chat.length > 0 ? (
                 chat.map((entry, index) => {
                     const query = entry.query;
@@ -44,7 +59,7 @@ const Chat = ({ chat, isChatVisible }) => {
                                         p: ({node, ...props}) => <p {...props} className="mb-2" />
                                     }}
                                 >
-                                    {tokens.join('')}
+                                    {response || tokenStream}
                                 </ReactMarkdown>
                             </div>
                         </div>
@@ -59,3 +74,9 @@ const Chat = ({ chat, isChatVisible }) => {
 }
 
 export default Chat;
+
+/*
+setChat(prevChat => prevChat.map((item, index) => 
+                index === prevChat.length - 1 ? {...item, response: data.message.chat[data.message.chat.length - 1]} : item
+            ));
+ */
