@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Query from '../components/query';
 import CytoscapeComponent from '../components/graphVisualization';
 import Chat from '../components/chat';
 import { ChatBotIcon } from '../assets/chatBotIcon';
 
+// Renders Chat and Graph visualization, and handle states that hold the data fetched from API
 const IndexPage = () => {
   const [chat, setChat] = useState([]);
   const [graphData, setGraphData] = useState(null);

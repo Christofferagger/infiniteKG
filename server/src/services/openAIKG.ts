@@ -2,17 +2,20 @@ import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import ImportData from './neo4jSendData';
 
+// Load environment variables
 dotenv.config();
 
-
+// Initialize OpenAI with API key
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Define color mapping and type-color map
 const typeColorMapping = ['#CCFFDA', '#E4CCFF', '#FECCFF', '#CCD1FF', '#CCE0FF', '#FFE8CC', '#FBFFCC', '#FFCFCC', '#FFCCDE'];
 const typeToColor = new Map();  
 let colorIndex = 0;
 
+// Define Node, ResponseData, and Element interfaces
 interface Node {
     id: string;
     label: string;
@@ -20,12 +23,10 @@ interface Node {
     properties: object;
     color?: string;
 }
-
 interface ResponseData {
     nodes: Node[];
     edges: any[]; 
 }
-
 interface Element {
     group: 'nodes' | 'edges';
     data: {
@@ -40,6 +41,7 @@ interface Element {
     };
 }
 
+// Function to generate knowledge graph with OpenAI
 async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
     const query = queryPrompt;
     let completion;
@@ -47,18 +49,19 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
     let elements: Element[] = [];
 
     try {
+        // Create a chat completion with OpenAI
         completion = await openai.chat.completions.create({
             model: "gpt-3.5-turbo-16k",
             messages: [
                 {
                     role: "user",
-                    content: `Given the question: ${query}, and the answer: ${answer}, please provide a concise knowledge graph. Highlight the main points, with a maximum of 8 nodes and 10 edges. Keep edge descriptions simple, using a maximum of 4 words in the 'type' parameter. The 'id' of each node should be equivalent to its 'label'.`
+                    content: `Given the question: ${query}, and the answer: ${answer}, please provide a concise knowledge graph. Highlight the main points, with a maximum of 8 nodes and 10 edges. Keep edge descriptions simple and use the type parameter to explain the nodes relationship. The 'id' of each node should be equivalent to its 'label'.`
                 }
             ],
             functions: [
                 {
                     name: "knowledge_graph",
-                    description: "Generate a concise knowledge graph with entities and relationships. The 'type' description for edges should be brief, using no more than 4 words. The 'id' for each node should match its 'label'.",
+                    description: "Generate a concise knowledge graph with entities and relationships. The 'type' description for edges should be describing the connection, using no more than 4 words. The 'id' for each node should match its 'label'.",
                     parameters: {
                         type: "object",
                         properties: {
@@ -108,9 +111,11 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
         throw new Error("Error generating knowledge graph."); 
     }
 
+    // Process the chat completion
     if (completion && completion.choices && completion.choices[0] && completion.choices[0]["message"] && completion.choices[0]["message"]["function_call"]) {
         responseData = JSON.parse(completion.choices[0]["message"]["function_call"]["arguments"]) as ResponseData;
 
+        // Assign color to nodes and format node and edge's
         responseData.nodes.forEach(node => {
             if (!typeToColor.has(node.type)) {
                 typeToColor.set(node.type, typeColorMapping[colorIndex % typeColorMapping.length]);
@@ -124,6 +129,7 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
             edge.to = edge.to.toLowerCase();
         });
 
+        // Push the generated knowledge graph into Neo4j
         try {
             await ImportData(JSON.stringify(responseData));
         } catch (error) {
@@ -131,7 +137,7 @@ async function OpenAIKG(queryPrompt: string, answer: string): Promise<any> {
             throw new Error("Error importing data into Neo4j.");
         };
     
-
+        // Format nodes and edges to fit in elements
         responseData.nodes.forEach(node => {
             let obj: Element = {
                 group: 'nodes',

@@ -2,21 +2,25 @@ import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import { io } from '../index';
 
+// Load environment variables
 dotenv.config();
 
+// Initialize OpenAI with API key
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Define and initialize ChatHistoryType
 type ChatHistoryType = {
     query: string;
     response: string;
 };
-
 let chatHistory: ChatHistoryType[] = [];
 
+// Function to generate chat-answers with OpenAI
 async function OpenAIChat(query: string): Promise<string> {
     
+    // Define the prompt
     const prompt =
     `You will generate a concise, dense and self-contained answer to this question: ${query} by following this method.
     Repeat these two steps two times.
@@ -35,7 +39,9 @@ async function OpenAIChat(query: string): Promise<string> {
     Please structure your answer in multiple paragraphs, use **bold** to highlight key points and entities, use bullet points (*) for unordered lists, and use numbered lists (1., 2., 3., etc.) for sequential or prioritized information where appropriate.`;
 
     let answer = '';
+
     try {
+        // Define messages for the chat
         const messages: { role: "system" | "user" | "assistant", content: string }[] = [
             {
                 role: "system",
@@ -51,12 +57,14 @@ async function OpenAIChat(query: string): Promise<string> {
             }
         ];
         
+        // Create a chat completion with OpenAI
         const stream = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: messages,
             stream: true,
         });
 
+        // Process the chat completion and send the token stream to client via socket.io
         for await (const part of stream) {
             if (part.choices[0] && part.choices[0].delta) {
                 let token = part.choices[0].delta.content || '';
@@ -69,6 +77,7 @@ async function OpenAIChat(query: string): Promise<string> {
             }
         };
 
+        // Add the answer and query to the history
         chatHistory.push({
             query: query,
             response: answer

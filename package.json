@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "concurrently": "^8.2.1"
+  },
+  "scripts": {
+    "install": "cd server && npm install && cd ../client && npm install",
+    "start": "concurrently \"cd server && node dist/index.js\" \"cd client && npm run dev\""
+  }
+}

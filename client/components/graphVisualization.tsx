@@ -64,7 +64,7 @@ const CytoscapeComponent = ({ elements, isChatVisible, newData }) => {
     // Layout
     const layout = cy.elements().layout({
       name: 'cose',
-      idealEdgeLength: (edge) => 100,
+      idealEdgeLength: (edge) => 50,
       nodeOverlap: 20,
       animate: true,
       nodeRepulsion: (node) => 4500000, 

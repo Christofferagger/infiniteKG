@@ -22,14 +22,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const openai_1 = __importDefault(require("openai"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const index_1 = require("../index");
+// Load environment variables
 dotenv_1.default.config();
+// Initialize OpenAI with API key
 const openai = new openai_1.default({
     apiKey: process.env.OPENAI_API_KEY,
 });
 let chatHistory = [];
+// Function to generate chat-answers with OpenAI
 function OpenAIChat(query) {
     var _a, e_1, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
+        // Define the prompt
         const prompt = `You will generate a concise, dense and self-contained answer to this question: ${query} by following this method.
     Repeat these two steps two times.
     Step 1. Identify informative entities which are key to answering the question, and are missing from the previously generated answer.
@@ -47,6 +51,7 @@ function OpenAIChat(query) {
     Please structure your answer in multiple paragraphs, use **bold** to highlight key points and entities, use bullet points (*) for unordered lists, and use numbered lists (1., 2., 3., etc.) for sequential or prioritized information where appropriate.`;
         let answer = '';
         try {
+            // Define messages for the chat
             const messages = [
                 {
                     role: "system",
@@ -61,12 +66,14 @@ function OpenAIChat(query) {
                     content: query
                 }
             ];
+            // Create a chat completion with OpenAI
             const stream = yield openai.chat.completions.create({
                 model: "gpt-3.5-turbo",
                 messages: messages,
                 stream: true,
             });
             try {
+                // Process the chat completion and send the token stream to client via socket.io
                 for (var _d = true, stream_1 = __asyncValues(stream), stream_1_1; stream_1_1 = yield stream_1.next(), _a = stream_1_1.done, !_a; _d = true) {
                     _c = stream_1_1.value;
                     _d = false;
@@ -91,6 +98,7 @@ function OpenAIChat(query) {
                 finally { if (e_1) throw e_1.error; }
             }
             ;
+            // Add the answer and query to the history
             chatHistory.push({
                 query: query,
                 response: answer

@@ -1,18 +1,23 @@
 import * as dotenv from 'dotenv';
 import * as neo4j from 'neo4j-driver';
 
+// Load environment variables
 dotenv.config();
 
+// Extract Neo4j parameters from environment variables
 const username = process.env.NEO4J_USERNAME;
 const password = process.env.NEO4J_PASSWORD;
 const url = process.env.NEO4J_URL;
 
+// Check if Neo4j parameters are set
 if (!username || !password || !url) {
     throw new Error('Environment variables NEO4J_USERNAME, NEO4J_PASSWORD, or NEO4J_URL are not set');
 }
 
+// Initialize Neo4j driver
 const driver = neo4j.driver(url, neo4j.auth.basic(username, password));
 
+// Function to get all nodes and edges from Neo4j
 async function GetAllData() {
     const session = driver.session();
 
@@ -38,7 +43,7 @@ async function GetAllData() {
         const nodesResult = await session.run(nodesQuery);
         const nodes = nodesResult.records.map(record => record.get('n').properties);
 
-        // Query to get all relationships
+        // Query to get all edges
         const edgesQuery = 'MATCH (n)-[r]->(m) RETURN r, n, m';
         const edgesResult = await session.run(edgesQuery);
         const edges = edgesResult.records.map(record => {
@@ -87,6 +92,7 @@ async function GetAllData() {
     } catch (error) {
         console.error('Error when getting data from Neo4j: ', error);
     } finally {
+        // Close the session
         session.close();
     }
 };
