@@ -55,3 +55,5 @@ npm install
 ```
 npm start
 ```
+
+I'm active on twitter [C_agger](https://twitter.com/C_Agger_) slide the DM or drop a follow😊
