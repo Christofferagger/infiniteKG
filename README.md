@@ -12,7 +12,7 @@ https://github.com/Christofferagger/infiniteKG/assets/88538278/85638dbf-8939-468
 
 
 ## Tweet 🐔
-Link...
+[infiniteKG](https://twitter.com/C_Agger_/status/1708954145917436105)
 
 ## Set it up 🫡
 
