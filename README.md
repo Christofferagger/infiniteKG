@@ -7,7 +7,9 @@ The project is highly inspired by @Yohei's [instagraph](https://github.com/yohei
 
 ## Demo👀
 
-https://github.com/Christofferagger/infiniteKG/assets/88538278/e57e0430-e0e6-473a-aeb1-b08d17e05506
+https://github.com/Christofferagger/infiniteKG/assets/88538278/85638dbf-8939-4686-83fd-980e7b49fd27
+
+
 
 ## Tweet 🐔
 Link...
