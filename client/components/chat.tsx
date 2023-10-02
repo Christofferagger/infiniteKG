@@ -2,18 +2,23 @@ import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { io } from 'socket.io-client';
 
+// Initialize socket connection to the server
 const socket = io('http://localhost:3001'); 
 
 const Chat = ({ chat, isChatVisible, setChat, pushTokens }) => {
 
+    // Reference to the end of the chat
     const endOfChatRef = useRef(null);
+
     const [tokens, setTokens] = useState([]); 
     const [tokenStream, setTokenStream] = useState('');
 
+    // Effect to scroll to the end of the chat whenever a new message is added
     useEffect(() => {
         endOfChatRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [chat]);
 
+    // Effect that streams the answer from the server
     useEffect(() => {
         socket.on('token', (token) => {
             setTokens((prevTokens) => [...prevTokens, token]);
@@ -25,22 +30,21 @@ const Chat = ({ chat, isChatVisible, setChat, pushTokens }) => {
         };
     }, [tokens]);
 
+    // Effect to push the collective tokens into the chat history as response
     useEffect(() => {
         if (pushTokens === true) {
-            console.log(tokens);
             let response = tokens.join('');
-            console.log(response);
             setChat(prevChat => prevChat.map((item, index) => 
             index === prevChat.length - 1 ? {...item, response: response} : item))
             setTokens([]);
             setTokenStream('');
-            console.log(chat);
         }
     }, [pushTokens])
 
     return (
         <div className={isChatVisible ? 'w-1/2 ml-auto overflow-auto border pt-14 pb-24' : 'hidden'}>
             {Array.isArray(chat) && chat.length > 0 ? (
+                // If chat has entries, map over them and display each one
                 chat.map((entry, index) => {
                     const query = entry.query;
                     const response = entry.response;
@@ -74,9 +78,3 @@ const Chat = ({ chat, isChatVisible, setChat, pushTokens }) => {
 }
 
 export default Chat;
-
-/*
-setChat(prevChat => prevChat.map((item, index) => 
-                index === prevChat.length - 1 ? {...item, response: data.message.chat[data.message.chat.length - 1]} : item
-            ));
- */

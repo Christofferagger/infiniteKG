@@ -2,13 +2,16 @@ import React, { useEffect } from 'react';
 import cytoscape from 'cytoscape';
 import _ from 'lodash';
 
+// CytoscapeComponent for visualizing graph data
 const CytoscapeComponent = ({ elements, isChatVisible, newData }) => {
   useEffect(() => {
     
+    // Initialize cytoscape with configuration
     const cy = cytoscape({
       container: document.getElementById('cy'),
       elements: elements,
       style: [
+        // Node style
         {
           selector: 'node',
           style: {
@@ -26,6 +29,7 @@ const CytoscapeComponent = ({ elements, isChatVisible, newData }) => {
             'background-color': 'data(color)',
           } as any
         },
+        // Edge style
         {
           selector: 'edge',
           style: {
@@ -49,6 +53,7 @@ const CytoscapeComponent = ({ elements, isChatVisible, newData }) => {
       userPanningEnabled: true,
     });
 
+    // Filter elements to focus on
     const focusElements = cy.filter(ele => 
       newData.some(focusEle => (
         (ele.isNode() && focusEle.group === 'nodes' && ele.id() === focusEle.data.id) ||
@@ -56,6 +61,7 @@ const CytoscapeComponent = ({ elements, isChatVisible, newData }) => {
       ))
     );    
 
+    // Layout
     const layout = cy.elements().layout({
       name: 'cose',
       idealEdgeLength: (edge) => 100,
@@ -68,6 +74,7 @@ const CytoscapeComponent = ({ elements, isChatVisible, newData }) => {
       numIter: 1000, 
     });
 
+    // On layout stop, fit and center focus elements
     layout.on('layoutstop', () => {
       cy.fit(focusElements);
       cy.center(focusElements);

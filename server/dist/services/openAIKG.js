@@ -131,6 +131,7 @@ function OpenAIKG(queryPrompt, answer) {
                 elements.push(obj);
             });
         }
+        console.log(elements);
         return elements;
     });
 }

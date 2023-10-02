@@ -9,6 +9,7 @@ const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData, chat, setP
 
     const loadingMessage = "Loading Graph...";
 
+    // Handle submit when user sends a question
     const handleSubmit = () => {
         setIsLoading(true);
         const initialButtonClicked = buttonClicked;
@@ -16,8 +17,10 @@ const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData, chat, setP
         setIsChatVisible(true);
         setPushTokens(false);
         
+        // Add new chat entry
         setChat(prevChat => [...prevChat, { query: inputValue, response: null }]);
 
+        // Fetch data from the API
         fetch('http://localhost:3001/api/query', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -39,6 +42,7 @@ const Query = ({ setGraphData, setChat, setIsChatVisible, setNewData, chat, setP
 
     const textareaRef = useRef(null);
     
+    // Autosize textarea
     useEffect(() => {
         if (textareaRef.current) {
             autosize(textareaRef.current);
