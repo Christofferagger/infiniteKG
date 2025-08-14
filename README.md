@@ -1,18 +1,11 @@
-# infiniteKG 💭
-A typescript app that enables you to grasp complex concepts visually via knowledge graphs🤩
+# infiniteKG 
+A typescript app that enables you to understand concepts visually via knowledge graphs.
 
-Ask any question and receive an in-depth answer and a visual knowledge graph. Chat with the app and expand the graph as you build out your knowledge🧠
-
-The project is highly inspired by @Yohei's [instagraph](https://github.com/yoheinakajima/instagraph), check it out😊
+Project is highly inspired by @Yohei's [instagraph](https://github.com/yoheinakajima/instagraph)
 
 ## Demo👀
 
 https://github.com/Christofferagger/infiniteKG/assets/88538278/85638dbf-8939-4686-83fd-980e7b49fd27
-
-
-
-## Tweet 🐔
-[infiniteKG](https://twitter.com/C_Agger_/status/1708954145917436105)
 
 ## Set it up 🫡
 
